@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/_head.ejs') %>
+<body>
+<%- include('../partials/_header.ejs') %>
+<main role="main" class="container mt-4">
+  <div class="text-center">
+    <h1>Your Tasks</h1>
+    <a href="/tasks/new" class="btn btn-primary my-3">Add New Task</a>
+    <div>
+      <% if (tasks && tasks.length > 0) { %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Due Date</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% tasks.forEach(function(task) { %>
+              <tr>
+                <td><%= task.title %></td>
+                <td><%= task.description %></td>
+                <td><%= task.dueDate ? new Date(task.dueDate).toDateString() : 'N/A' %></td>
+                <td><%= task.category %></td>
+                <td><%= task.priority %></td>
+                <td>
+                  <a href="/tasks/edit/<%= task._id %>" class="btn btn-sm btn-secondary">Edit</a>
+                  <button class="btn btn-sm btn-danger delete-task" data-task-id="<%= task._id %>">Delete</button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No tasks found. Add your first task.</p>
+      <% } %>
+    </div>
+  </div>
+</main>
+<%- include('../partials/_footer.ejs') %>
+<script src="/js/main.js"></script>
+</body>
+</html>

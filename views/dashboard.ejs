@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+<body>
+<%- include('partials/_header.ejs') %>
+<main role="main" class="container mt-4">
+  <div class="text-center">
+    <h1>Dashboard</h1>
+    <div>
+      <h3>Completed Tasks</h3>
+      <p>Today: <%= stats.today.length %></p>
+      <p>This Week: <%= stats.thisWeek.length %></p>
+      <p>This Month: <%= stats.thisMonth.length %></p>
+    </div>
+    <!-- Placeholder for Chart.js graph -->
+    <canvas id="productivityTrend" width="400" height="400"></canvas>
+    <% if (tasks && tasks.length > 0) { %>
+      <div>
+        <h3>Your Tasks</h3>
+        <ul class="list-group">
+          <% tasks.forEach(function(task) { %>
+            <li class="list-group-item">
+              <strong><%= task.title %></strong> - <%= task.category %> - <%= task.priority %>
+              <br>
+              Due: <%= task.dueDate.toDateString() %>
+              <span class="badge <% if (task.completed) { %>badge-success<% } else { %>badge-danger<% } %>">
+                <% if (task.completed) { %>Completed<% } else { %>Pending<% } %>
+              </span>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } else { %>
+      <p>You have no tasks yet. <a href="/tasks/new">Create your first task.</a></p>
+    <% } %>
+  </div>
+</main>
+</body>
+<%- include('partials/_footer.ejs') %>
+<script src="/js/main.js"></script>
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('productivityTrend').getContext('2d');
+  let labels = [];
+  let data = [];
+  if (stats.completedTasksByDay && Array.isArray(stats.completedTasksByDay)) {
+    labels = stats.completedTasksByDay.map(entry => entry.date);
+    data = stats.completedTasksByDay.map(entry => entry.count);
+  }
+
+  const productivityTrend = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: labels, // Use actual dates from task completion data
+          datasets: [{
+              label: 'Completed Tasks',
+              data: data, // Use actual completion counts
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+</script>
+</html>
